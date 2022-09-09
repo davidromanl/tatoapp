@@ -76,7 +76,8 @@
 </template>
 
 <script>
-var axios = () => {};
+import { addProd, getProd, delProd } from "../firebase.service";
+
 export default {
   name: "ProductosView",
 
@@ -102,10 +103,13 @@ export default {
     },
   },
 
+  mounted() {
+    this.listar();
+  },
+
   methods: {
     async listar() {
-      var { data } = await axios.get("/productos");
-      this.productos = data;
+      this.productos = await getProd();
       this.loading = false;
     },
 
@@ -121,15 +125,17 @@ export default {
 
     async guardar() {
       this.loading = true;
-      await axios.post("/producto", this.producto);
+      await addProd(this.producto);
       this.dialog = false;
       this.listar();
     },
 
-    async eliminar(id) {
-      await axios.delete("/producto/" + id);
+    eliminar(id) {
+      this.loading = true;
+      delProd(id);
       this.listar();
     },
+
   },
 };
 </script>
