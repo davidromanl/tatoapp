@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "bardetato-com"
+  },
+  "targets": {
+    "bardetato-com": {
+      "hosting": {
+        "tatoapp": [
+          "tatoapp"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

@@ -21,4 +21,4 @@ npm run lint
 ```
 
 ### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+App Bar de Tato para Gestión de Pedidos migración a Firebase. 9 Sep. 2022 by DR.
