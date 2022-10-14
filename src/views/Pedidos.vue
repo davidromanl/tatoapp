@@ -56,7 +56,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="p in productos(item.productos)" :key="p.id">
+              <tr v-for="p in item.productos" :key="p.id">
                 <td>{{ p.cant }}</td>
                 <td>{{ p.nombre }}</td>
                 <td>{{ p.valor | pesos }}</td>
@@ -66,7 +66,7 @@
           <v-divider></v-divider>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <strong>Total: {{ item.total | pesos }}</strong>
+            <strong>Total: {{ item.total || 0 | pesos }}</strong>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -81,7 +81,7 @@
     </v-snackbar>
     <PedidoForm
       :visible="dialog"
-      :pedido="pedido"
+      :item="pedido"
       @guardar="guardar"
       @close="dialog = false"
     />
@@ -91,6 +91,7 @@
 <script>
 //Componentes
 import PedidoForm from "@/components/PedidoForm.vue";
+import { getPedidos } from "../firebase.service";
 
 
 export default {
@@ -122,32 +123,36 @@ export default {
   },
 
   computed: {
-    filtro() {
-      let estado = this.estado > 0 ? "&estado=" + this.estado : "";
-      return "?fecha=" + this.fecha + estado;
-    },
+    
     filtroPedidos() {
       return this.pedidos.filter((pedido) => {
         const value = this.buscar ? this.buscar.toLowerCase() : "";
-        return pedido.nombre.toLowerCase().includes(value);
+        const estado = pedido.estado === this.estado || this.estado === 0
+        return pedido.nombre.toLowerCase().includes(value) && estado;
       });
     },
     total() {
       let total = 0;
       for (let item in this.filtroPedidos) {
-        total += this.filtroPedidos[item].total;
+        total += this.filtroPedidos[item].total || 0;
       }
       return total;
     },
   },
 
+  mounted() {
+    this.listar_pedidos();
+  },
+
   methods: {
-    listar_pedidos() {
-      this.pedidos = [];
+    async listar_pedidos() {
+      if(!this.fecha) return
+      this.pedidos = await getPedidos(this.fecha);      
     },
 
     nuevo() {
-      this.pedido = { estado: 1 };
+      const fecha = { seconds: Math.floor(Date.now() / 1000)}
+      this.pedido = { estado: 1, productos: [], fecha };
       this.dialog = true;
     },
 
@@ -156,8 +161,8 @@ export default {
       this.dialog = true;
     },
 
-    productos(item) {
-      return JSON.parse(item);
+    productos() {
+      //return JSON.parse(item);
     },
 
     guardar() {

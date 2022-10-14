@@ -1,43 +1,19 @@
+<!-- eslint-disable vue/no-mutating-props -->
 <template>
-  <v-dialog
-    v-model="show"
-    scrollable
-    persistent
-    max-width="500px"
-    :fullscreen="$vuetify.breakpoint.smAndDown"
-  >
-    <v-card>
-      <v-form
-        v-model="valid"
-        lazy-validation
-        ref="form"
-        @keypress.enter="guardar"
-        @submit.prevent="guardar"
-      >
+  <v-dialog :value="visible" scrollable persistent max-width="500px" :fullscreen="$vuetify.breakpoint.smAndDown">
+    <v-card :loading="loading">
+      <v-form v-model="valid" lazy-validation ref="form" @keypress.enter="guardar" @submit.prevent="guardar">
         <v-card-title primary-title>
           Pedido
           <v-spacer></v-spacer>
           <v-icon>mdi-clock</v-icon>
-          <small>{{ pedido.fecha }}</small>
+          <small>{{ pedido.fecha?.seconds | fecha }}</small>
         </v-card-title>
 
         <v-card-text>
-          <v-text-field
-            label="Nombre"
-            v-model="pedido.nombre"
-            :rules="[(v) => !!v || 'Requerido']"
-          ></v-text-field>
-          <v-autocomplete
-            clearable
-            solo
-            hide-selected
-            @change="add_producto"
-            label="Añadir producto"
-            :items="productos"
-            v-model="producto"
-            item-text="nombre"
-            return-object
-          >
+          <v-text-field label="Nombre" v-model="pedido.nombre" :rules="[(v) => !!v || 'Requerido']"></v-text-field>
+          <v-autocomplete clearable solo hide-selected @change="add_producto" label="Añadir producto" :items="productos"
+            v-model="producto" item-text="nombre" return-object>
           </v-autocomplete>
           <v-simple-table>
             <template v-slot:default>
@@ -49,27 +25,17 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(item, j) in items" :key="j">
+                <tr v-for="(item, j) in pedido.productos" :key="j">
                   <td>{{ item.nombre }}</td>
                   <td>
                     <v-btn @click="sumar(item.cant, j)" icon color="orange">
                       <v-icon>mdi-arrow-up</v-icon>
                     </v-btn>
                     {{ item.cant }}
-                    <v-btn
-                      @click="quitar(j)"
-                      v-if="item.cant < 2"
-                      icon
-                      color="error"
-                    >
+                    <v-btn @click="quitar(j)" v-if="item.cant < 2" icon color="error">
                       <v-icon>mdi-delete</v-icon>
                     </v-btn>
-                    <v-btn
-                      v-else
-                      @click="restar(item.cant, j)"
-                      icon
-                      color="error"
-                    >
+                    <v-btn v-else @click="restar(item.cant, j)" icon color="error">
                       <v-icon>mdi-arrow-down</v-icon>
                     </v-btn>
                   </td>
@@ -85,13 +51,7 @@
               <hr />
               <h3 class="text-right pa-2">Total: {{ total | pesos }}</h3>
               <v-radio-group row v-model="pedido.estado">
-                <v-radio
-                  :color="colores[n + 1]"
-                  v-for="(e, n) in estados"
-                  :key="n"
-                  :label="e"
-                  :value="n + 1"
-                />
+                <v-radio :color="colores[n + 1]" v-for="(e, n) in estados" :key="n" :label="e" :value="n + 1" />
               </v-radio-group>
             </v-col>
           </v-row>
@@ -107,19 +67,20 @@
 </template>
 
 <script>
+import { getProd, addPedido } from "../firebase.service";
 export default {
   name: "PedidoForm",
 
-  props: ["visible"],
+  props: ["visible", "item"],
 
   data: () => ({
-    items: [],
     valid: true,
-    pedido: {},
+    pedido: { productos: [] },
     productos: [],
     producto: {},
     estados: ["Nuevo", "Pendiente", "Terminado"],
     colores: ["", "light-green", "amber", "cyan"],
+    loading: false,
   }),
 
   filters: {
@@ -129,37 +90,43 @@ export default {
         currency: "USD",
       }).format(val);
     },
+    fecha(val) {
+      if(val) return new Date(val*1000).toLocaleString().slice(11, 22)
+    }
   },
 
   computed: {
     total() {
-      let total = this.items.reduce((sum, v) => sum + v.cant * v.valor, 0);
+      let total = this.pedido.productos.reduce((sum, v) => sum + v.cant * v.valor, 0);
       return total;
     },
-    show: {
-      get() {
-        return this.visible;
-      },
-      set(value) {
-        if (!value) this.$emit("close");
-      },
-    },
+
+  },
+
+  mounted() {
+    this.listar_productos()
+  },
+
+  watch: {
+    visible(val) {
+      if (val) this.pedido = JSON.parse(JSON.stringify(this.item))
+    }
   },
 
   methods: {
     async listar_productos() {
-      this.productos = [];
+      this.productos = await getProd();
     },
 
     add_producto() {
       let e = this.producto;
 
       //busca si esta
-      var index = this.items.map((i) => i.id).indexOf(e.id);
+      var index = this.pedido.productos.map((i) => i.id).indexOf(e.id);
 
       if (index >= 0) {
         //si esta lo suma
-        this.items[index].cant += 1;
+        this.pedido.productos[index].cant += 1;
       } else {
         //sino lo añade
         let item = {
@@ -168,27 +135,30 @@ export default {
           cant: 1,
           valor: e.valor,
         };
-        this.items.push(item);
+        this.pedido.productos.push(item);
       }
       this.producto = {};
     },
 
     sumar(cant, key) {
-      this.items[key].cant = cant + 1;
+      this.pedido.productos[key].cant = cant + 1;
     },
 
     restar(cant, key) {
-      this.items[key].cant = cant - 1;
+      this.pedido.productos[key].cant = cant - 1;
     },
 
     quitar(j) {
-      this.items.splice(j, 1);
+      this.pedido.productos.splice(j, 1);
     },
 
-    guardar() {
+    async guardar() {
       if (!this.$refs.form.validate()) return;
-      this.pedido.productos = this.items;
-      this.pedido.total = this.total;
+      this.loading = true
+      this.pedido.total = this.total
+      this.pedido.fecha = new Date()
+      await addPedido(this.pedido)
+      this.loading = false
       this.$emit("guardar");
     },
   },

@@ -13,22 +13,45 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore(firebase.app());
+const colRef = db.collection("productos");
+const pedRef = db.collection("pedidos");
 
 export const addProd = async (producto) => {
   if (producto.id) {
     const id = producto.id;
     delete producto.id;
-    await db.collection("productos").doc(id).update(producto);
+    await colRef.doc(id).update(producto);
   } else {
-    await db.collection("productos").add(producto);
+    await colRef.add(producto);
   }
 };
 export const getProd = async () => {
   const productos = [];
-  const docRef = await db.collection("productos").get();
+  const docRef = await colRef.get();
   docRef.forEach((doc) => productos.push({ id: doc.id, ...doc.data() }));
   return productos;
 };
 export const delProd = async (id) => {
-  await db.collection("productos").doc(id).delete();
+  await colRef.doc(id).delete();
+};
+//Pedido
+export const addPedido = async (pedido) => {
+  if (pedido.id) {
+    const id = pedido.id;
+    delete pedido.id;
+    await pedRef.doc(id).update(pedido);
+  } else {
+    await pedRef.add(pedido);
+  }
+};
+
+export const getPedidos = async (fecha) => {
+  const pedidos = [];
+  const start = new Date(fecha)
+  const end = new Date(start.getTime() + 24 * 60 * 60 * 1000)
+  const docRef = await pedRef
+    .where('fecha', '>=', start)
+    .where('fecha', '<=', end).get();
+  docRef.forEach((doc) => pedidos.push({ id: doc.id, ...doc.data() }));
+  return pedidos;
 };
