@@ -16,11 +16,27 @@ const routes = [
     path: "/productos",
     name: "Productos",
     component: Productos,
+    beforeEnter: (to, from, next) => {
+      const user = sessionStorage.getItem("key");
+      if (!user) {
+        next("/");
+      } else if (user !== "admin") {
+        next("/pedidos");
+      }
+      next();
+    },
   },
   {
     path: "/pedidos",
     name: "Pedidos",
     component: Pedidos,
+    beforeEnter: (to, from, next) => {
+      const user = sessionStorage.getItem("key");
+      if (!user) {
+        next("/");
+      }
+      next();
+    },
   },
 ];
 
