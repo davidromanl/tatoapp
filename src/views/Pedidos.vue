@@ -20,7 +20,7 @@
           label="Fecha"
           type="date"
           v-model="fecha"
-        ></v-text-field>
+          ></v-text-field>
       </v-col>
     </v-row>
     <v-tabs
@@ -107,7 +107,7 @@ export default {
     estado: 0,
     buscar: null,
     snackbar: false,
-    fecha: new Date(new Date().getTime()).toISOString().slice(0, 10),
+    fecha: new Date(new Date().getTime()-(24*60*60*1000)).toISOString().slice(0, 10),
     estados: ["Todo", "Nuevo", "Pendiente", "Terminado"],
     colores: ["", "light-green", "amber", "cyan"],
     pedido: {},
