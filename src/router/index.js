@@ -3,7 +3,7 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Pedidos from "../views/Pedidos.vue";
 import Productos from "../views/Productos.vue";
-import Informes from "../views/Informes.vue";
+import Informes from "../views/informes.vue";
 
 Vue.use(VueRouter);
 
