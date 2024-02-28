@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col>
-        <h2>Pedidos</h2>
+        <h2>Pedidos</h2> {{ fecha }}
         <v-btn @click="nuevo" color="success">Nuevo</v-btn>
       </v-col>
       <v-col>
@@ -40,7 +40,7 @@
         {{ e }}
       </v-tab>
     </v-tabs>
-
+    {{estado}}
     <v-row class="mt-2">
       <v-col v-for="item in filtroPedidos" :key="item.id" sm="12" md="4">
         <v-card @click="editar(item)">
@@ -73,6 +73,11 @@
     </v-row>
     <v-row>
       <v-col>
+        <h2>Total productos: {{ totalProducto | pesos }}</h2>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
         <h2>Total {{ estados[estado] }}s: {{ total | pesos }}</h2>
       </v-col>
     </v-row>
@@ -92,7 +97,7 @@
 //Componentes
 import PedidoForm from "@/components/PedidoForm.vue";
 import { getPedidos } from "../firebase.service";
-
+import { pesos, fecha } from "./../helper"
 
 export default {
   name: "PedidosView",
@@ -107,7 +112,7 @@ export default {
     estado: 0,
     buscar: null,
     snackbar: false,
-    fecha: new Date(new Date().getTime()-(24*60*60*1000)).toISOString().slice(0, 10),
+    fecha: fecha(),
     estados: ["Todo", "Nuevo", "Pendiente", "Terminado"],
     colores: ["", "light-green", "amber", "cyan"],
     pedido: {},
@@ -115,10 +120,7 @@ export default {
 
   filters: {
     pesos(val) {
-      return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(val);
+      return pesos(val)
     },
   },
 
@@ -138,6 +140,9 @@ export default {
       }
       return total;
     },
+    totalProducto() {
+      return 1
+    }
   },
 
   mounted() {
