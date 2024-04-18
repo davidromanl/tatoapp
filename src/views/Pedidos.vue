@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col>
-        <h2>Pedidos</h2> {{ fecha }}
+        <h2>Pedidos</h2>
         <v-btn @click="nuevo" color="success">Nuevo</v-btn>
       </v-col>
       <v-col>
@@ -40,7 +40,6 @@
         {{ e }}
       </v-tab>
     </v-tabs>
-    {{estado}}
     <v-row class="mt-2">
       <v-col v-for="item in filtroPedidos" :key="item.id" sm="12" md="4">
         <v-card @click="editar(item)">

@@ -25,13 +25,14 @@ export default {
   }),
   computed: {
     isAdmin() {
-      return this.userStore.user === "admin";
+      return this.userStore === "admin";
     }
   },
   methods: {
     logout() {
       sessionStorage.removeItem("key");
-      this.$router.push({ name: "Home" });
+      if(this.$route.name !== "Home")
+        this.$router.push({ name: "Home" });
     },
   },
 };
