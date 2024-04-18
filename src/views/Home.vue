@@ -3,12 +3,6 @@
     <v-row>
       <v-col>
         <h2 class="text-center">BarDeTato - App</h2>
-        <p class="text-center">App para administrar pedidos <small>(en desarrollo)</small></p>
-        <p class="text-center">
-          <strong>Demo:</strong> <br>
-          Usuario: <strong>admin</strong> - contraseña: **admin** <br>
-          Usuario: <strong>user1</strong> - contraseña: **demo**
-        </p>
       </v-col>
     </v-row>
     <v-row justify="center">
@@ -37,11 +31,11 @@
 const users = [
   {
     user: "admin",
-    password: "**admin**"
+    password: "B4rD3T4t0"
   },
   {
-    user: "user1",
-    password: "**demo**"
+    user: "bar123",
+    password: "tato-2024"
   }
 ];
 
