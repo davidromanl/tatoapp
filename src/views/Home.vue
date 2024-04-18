@@ -48,10 +48,9 @@ export default {
   }),
   methods: {
     login() {
-      const { user } = users.find(u => u.user === this.user && u.password === this.password);
-      console.log(user);
-      if (user) {
-        sessionStorage.setItem("key", user);
+      const result = users.find(u => u.user === this.user && u.password === this.password);
+      if (result) {
+        sessionStorage.setItem("key", result.user);
         this.$router.push({ name: "Pedidos" });
       }
     },
