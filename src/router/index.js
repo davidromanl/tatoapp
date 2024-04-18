@@ -1,8 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/home.vue";
-import Pedidos from "../views/pedidos.vue";
-import Productos from "../views/productos.vue";
+import Home from "../views/Home.vue";
+import Pedidos from "../views/Pedidos.vue";
+import Productos from "../views/Productos.vue";
 import Informes from "../views/informes.vue";
 
 Vue.use(VueRouter);

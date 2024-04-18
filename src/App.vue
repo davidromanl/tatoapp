@@ -4,14 +4,15 @@
       <v-tabs color="primary">
         <v-tab to="/"> Inicio </v-tab>
         <v-tab to="/pedidos"> Pedidos </v-tab>
-        <v-tab to="/productos"> Productos </v-tab>
-        <v-tab to="/informes"> Informes </v-tab>
+        <v-tab v-if="isAdmin" to="/productos"> Productos </v-tab>
+        <v-tab v-if="isAdmin" to="/informes"> Informes </v-tab>
         <v-spacer></v-spacer>
         <v-tab @click="logout"> Salir </v-tab>
       </v-tabs>
     </v-app-bar>
     <v-main>
       <router-view />
+      
     </v-main>
   </v-app>
 </template>
@@ -22,6 +23,11 @@ export default {
   data: () => ({
     userStore: sessionStorage.getItem("key"),
   }),
+  computed: {
+    isAdmin() {
+      return this.userStore.user === "admin";
+    }
+  },
   methods: {
     logout() {
       sessionStorage.removeItem("key");
