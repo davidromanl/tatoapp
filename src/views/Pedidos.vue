@@ -15,12 +15,18 @@
       </v-col>
       <v-col>
         Filtrar:
-        <v-text-field
+        <v-menu>
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field prepend-icon="mdi-calendar" readonly label="Fecha" @change="listar_pedidos" v-model="fecha" v-bind="attrs" v-on="on"></v-text-field>
+          </template>
+          <v-date-picker v-model="fecha" locale="es-CO"></v-date-picker>
+        </v-menu>
+        <!-- <v-text-field
           @change="listar_pedidos"
           label="Fecha"
           type="date"
           v-model="fecha"
-          ></v-text-field>
+          ></v-text-field> -->
       </v-col>
     </v-row>
     <v-tabs
@@ -120,6 +126,13 @@ export default {
   filters: {
     pesos(val) {
       return pesos(val)
+    },
+  },
+
+  watch: {
+    fecha(val) {
+      this.listar_pedidos()
+      console.log(val)
     },
   },
 
