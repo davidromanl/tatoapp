@@ -47,8 +47,10 @@ export const addPedido = async (pedido) => {
 
 export const getPedidos = async (fecha) => {
   const pedidos = [];
-  const start = new Date(fecha)
-  const end = new Date(start.getTime() + 24 * 60 * 60 * 1000)
+  const [year, month, day] = fecha.split("-")
+  const start = new Date(year, month - 1, day)
+  const end = new Date(year, month - 1, day)
+  end.setHours(23, 59, 59, 999)
   const docRef = await pedRef
     .where('fecha', '>=', start)
     .where('fecha', '<=', end).get();
