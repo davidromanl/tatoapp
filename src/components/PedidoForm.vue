@@ -167,13 +167,6 @@
 <script>
 import { getProd, addPedido } from "../firebase.service";
 
-const formatter = new Intl.DateTimeFormat('es-CO', {
-    timeZone: 'America/Bogota',
-    year: 'numeric', month: 'numeric', day: 'numeric',
-    hour: 'numeric', minute: 'numeric', second: 'numeric',
-    hour12: true
-});
-
 export default {
   name: "PedidoForm",
 
@@ -273,8 +266,7 @@ export default {
       if (!this.$refs.form.validate()) return;
       this.loading = true;
       this.pedido.total = this.total;
-      const nowUTC = new Date().toISOString()
-      this.pedido.fecha = formatter.format(new Date(nowUTC))
+      this.pedido.fecha = new Date();
       await addPedido(this.pedido);
       this.loading = false;
       this.$emit("guardar");

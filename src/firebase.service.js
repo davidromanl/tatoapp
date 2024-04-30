@@ -46,14 +46,14 @@ export const addPedido = async (pedido) => {
 };
 
 export const getPedidos = async (fecha) => {
+  console.log(fecha)
   const pedidos = [];
-  const [year, month, day] = fecha.split("-")
-  const start = new Date(year, month - 1, day)
-  const end = new Date(year, month - 1, day)
-  end.setHours(23, 59, 59, 999)
+  const start = new Date(fecha)
+  const end = new Date(start.getTime() + 24 * 60 * 60 * 1000)
   const docRef = await pedRef
     .where('fecha', '>=', start)
-    .where('fecha', '<=', end).get();
+    .where('fecha', '<=', end)
+    .get();
   docRef.forEach((doc) => pedidos.push({ id: doc.id, ...doc.data() }));
   return pedidos;
 };
