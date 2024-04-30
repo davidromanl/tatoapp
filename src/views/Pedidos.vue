@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row>
-      <v-col>
+      <v-col cols="6">
         <h2>Pedidos</h2>
         <v-btn @click="nuevo" color="success">Nuevo</v-btn>
       </v-col>
@@ -102,7 +102,7 @@
 //Componentes
 import PedidoForm from "@/components/PedidoForm.vue";
 import { getPedidos } from "../firebase.service";
-import { pesos, fecha } from "./../helper"
+import { fecha, pesos } from "./../helper"
 
 export default {
   name: "PedidosView",
@@ -176,10 +176,6 @@ export default {
     editar(item) {
       this.pedido = Object.assign({}, item);
       this.dialog = true;
-    },
-
-    productos() {
-      //return JSON.parse(item);
     },
 
     guardar() {
