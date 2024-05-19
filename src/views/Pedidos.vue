@@ -103,7 +103,6 @@ import { format } from "@formkit/tempo"
 //Componentes
 import PedidoForm from "@/components/PedidoForm.vue";
 import { getPedidos } from "../firebase.service";
-// import { fecha, pesos } from "./../helper"
 import { pesos } from "./../helper"
 
 export default {

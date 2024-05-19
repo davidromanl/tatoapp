@@ -268,7 +268,6 @@ export default {
       this.loading = true;
       this.pedido.total = this.total;
       this.pedido.fecha = format(new Date(), "YYYY-MM-DD");
-      this.hora
       await addPedido(this.pedido);
       this.loading = false;
       this.$emit("guardar");
