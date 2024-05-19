@@ -134,7 +134,7 @@
           <v-row dense>
             <v-col class="text-center pa-3">
               <v-icon>mdi-clock</v-icon>
-              <small>{{ pedido.fecha?.seconds | fecha }}</small>
+              <small>{{ pedido.hora | fecha }}</small>
             </v-col>
             <v-col>
               <h3 class="text-right pa-2">
@@ -166,6 +166,7 @@
 
 <script>
 import { getProd, addPedido } from "../firebase.service";
+import { format } from "@formkit/tempo"
 
 export default {
   name: "PedidoForm",
@@ -266,7 +267,8 @@ export default {
       if (!this.$refs.form.validate()) return;
       this.loading = true;
       this.pedido.total = this.total;
-      this.pedido.fecha = new Date();
+      this.pedido.fecha = format(new Date(), "YYYY-MM-DD");
+      this.hora
       await addPedido(this.pedido);
       this.loading = false;
       this.$emit("guardar");

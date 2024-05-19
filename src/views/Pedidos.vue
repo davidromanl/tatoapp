@@ -99,10 +99,12 @@
 </template>
 
 <script>
+import { format } from "@formkit/tempo"
 //Componentes
 import PedidoForm from "@/components/PedidoForm.vue";
 import { getPedidos } from "../firebase.service";
-import { fecha, pesos } from "./../helper"
+// import { fecha, pesos } from "./../helper"
+import { pesos } from "./../helper"
 
 export default {
   name: "PedidosView",
@@ -117,7 +119,7 @@ export default {
     estado: 0,
     buscar: null,
     snackbar: false,
-    fecha: fecha(),
+    fecha: format(new Date(), "YYYY-MM-DD"),
     estados: ["Todo", "Nuevo", "Pendiente", "Terminado"],
     colores: ["", "light-green", "amber", "cyan"],
     pedido: {},
@@ -168,8 +170,9 @@ export default {
     },
 
     nuevo() {
-      const fecha = { seconds: Math.floor(Date.now() / 1000)}
-      this.pedido = { estado: 1, productos: [], fecha };
+      const hora = Math.floor(Date.now() / 1000)
+      
+      this.pedido = { estado: 1, productos: [], fecha: this.fecha, hora };
       this.dialog = true;
     },
 
