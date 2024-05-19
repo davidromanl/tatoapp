@@ -148,7 +148,7 @@
               <div class="pa-3">Medio de pago:</div>
             </v-col>
             <v-col>
-              <v-select dense :items="mediosPago" hide-details></v-select>
+              <v-select v-model="pedido.medioPago" dense :items="mediosPago" hide-details></v-select>
             </v-col>
           </v-row>
         </v-card-text>

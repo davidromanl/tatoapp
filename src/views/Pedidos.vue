@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="6">
+      <v-col>
         <h2>Pedidos</h2>
         <v-btn @click="nuevo" color="success">Nuevo</v-btn>
       </v-col>
@@ -10,14 +10,20 @@
         <v-text-field
           label="Por nombre"
           v-model="buscar"
-          clearable
+          clearable hide-details
         ></v-text-field>
+      </v-col>
+      <v-col>
+        Medio de Pago:
+        <v-select
+         label="Medio de pago"
+         v-model="medioPago" :items="mediosPago" hide-details></v-select>
       </v-col>
       <v-col>
         Filtrar:
         <v-menu>
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field prepend-icon="mdi-calendar" readonly label="Fecha" @change="listar_pedidos" v-model="fecha" v-bind="attrs" v-on="on"></v-text-field>
+            <v-text-field prepend-icon="mdi-calendar" readonly label="Fecha" @change="listar_pedidos" v-model="fecha" hide-details v-bind="attrs" v-on="on"></v-text-field>
           </template>
           <v-date-picker v-model="fecha" locale="es-CO"></v-date-picker>
         </v-menu>
@@ -29,6 +35,7 @@
           ></v-text-field> -->
       </v-col>
     </v-row>
+    <v-row>
     <v-tabs
       fixed-tabs
       centered
@@ -46,6 +53,7 @@
         {{ e }}
       </v-tab>
     </v-tabs>
+    </v-row>
     <v-row class="mt-2">
       <v-col v-for="item in filtroPedidos" :key="item.id" sm="12" md="4">
         <v-card @click="editar(item)">
@@ -74,11 +82,6 @@
             <strong>Total: {{ item.total || 0 | pesos }}</strong>
           </v-card-actions>
         </v-card>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <h2>Total productos: {{ totalProducto | pesos }}</h2>
       </v-col>
     </v-row>
     <v-row>
@@ -117,7 +120,9 @@ export default {
     dialog: false,
     estado: 0,
     buscar: null,
+    medioPago: 'Todos',
     snackbar: false,
+    mediosPago: ['Todos',"Efectivo", "Tarjeta", "Transferencia"],
     fecha: format(new Date(), "YYYY-MM-DD"),
     estados: ["Todo", "Nuevo", "Pendiente", "Terminado"],
     colores: ["", "light-green", "amber", "cyan"],
@@ -131,9 +136,8 @@ export default {
   },
 
   watch: {
-    fecha(val) {
+    fecha() {
       this.listar_pedidos()
-      console.log(val)
     },
   },
 
@@ -143,7 +147,8 @@ export default {
       return this.pedidos.filter((pedido) => {
         const value = this.buscar ? this.buscar.toLowerCase() : "";
         const estado = pedido.estado === this.estado || this.estado === 0
-        return pedido.nombre.toLowerCase().includes(value) && estado;
+        const medio = this.medioPago == 'Todos' || this.medioPago == pedido.medioPago
+        return pedido.nombre.toLowerCase().includes(value) && estado && medio;
       });
     },
     total() {
@@ -152,9 +157,6 @@ export default {
         total += this.filtroPedidos[item].total || 0;
       }
       return total;
-    },
-    totalProducto() {
-      return 1
     }
   },
 
@@ -169,9 +171,10 @@ export default {
     },
 
     nuevo() {
+      const medioPago = 'Efectivo'
       const hora = Math.floor(Date.now() / 1000)
-      
-      this.pedido = { estado: 1, productos: [], fecha: this.fecha, hora };
+      const fecha = format(new Date(), "YYYY-MM-DD")
+      this.pedido = { estado: 1, productos: [], fecha, hora, medioPago };
       this.dialog = true;
     },
 
