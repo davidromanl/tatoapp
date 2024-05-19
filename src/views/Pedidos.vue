@@ -86,7 +86,7 @@
     </v-row>
     <v-row>
       <v-col>
-        <h2>Total {{ estados[estado] }}s: {{ total | pesos }}</h2>
+        <h2>Total {{ estados[estado] }}s: {{ total | pesos }} {{ medioPago == 'Todos' ? '' : medioPago }}</h2>
       </v-col>
     </v-row>
     <v-snackbar color="info" v-model="snackbar">
