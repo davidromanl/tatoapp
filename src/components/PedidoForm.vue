@@ -110,16 +110,16 @@
               <v-checkbox
                 class="mt-2"
                 label="Incluir propina"
-                v-model="propina"
+                v-model="pedido.propina"
                 hide-details
               ></v-checkbox>
             </v-col>
-            <v-col class="mt-3 text-right" :class="{ 'grey--text': !propina }">
+            <v-col class="mt-3 text-right" :class="{ 'grey--text': !pedido.propina }">
               Servicio 10%
             </v-col>
             <v-col
               class="mt-3 mr-3 text-right"
-              :class="{ 'grey--text text-decoration-line-through': !propina }"
+              :class="{ 'grey--text text-decoration-line-through': !pedido.propina }"
             >
               {{ (total * 0.1) | pesos }}
             </v-col>
@@ -138,7 +138,7 @@
             </v-col>
             <v-col>
               <h3 class="text-right pa-2">
-                Total: {{ propina ? total * 1.1 : total | pesos }}
+                Total: {{ pedido.propina ? total * 1.1 : total | pesos }}
               </h3>
             </v-col>
           </v-row>
@@ -166,7 +166,6 @@
 
 <script>
 import { getProd, addPedido } from "../firebase.service";
-import { format } from "@formkit/tempo"
 
 export default {
   name: "PedidoForm",
@@ -175,7 +174,6 @@ export default {
 
   data: () => ({
     valid: true,
-    propina: false,
     page: 1,
     pageCount: 0,
     pedido: { productos: [] },
@@ -267,7 +265,6 @@ export default {
       if (!this.$refs.form.validate()) return;
       this.loading = true;
       this.pedido.total = this.total;
-      this.pedido.fecha = format(new Date(), "YYYY-MM-DD");
       await addPedido(this.pedido);
       this.loading = false;
       this.$emit("guardar");
