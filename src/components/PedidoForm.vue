@@ -76,7 +76,7 @@
                 :items="pedido.productos"
               >
                 <template v-slot:item.cant="{ item, index }">
-                  <v-btn @click="sumar(item.cant, index)" icon color="orange">
+                  <v-btn @click="sumar(index)" icon color="orange">
                     <v-icon>mdi-arrow-up</v-icon>
                   </v-btn>
                   {{ item.cant }}
@@ -90,7 +90,7 @@
                   </v-btn>
                   <v-btn
                     v-else
-                    @click="restar(item.cant, index)"
+                    @click="restar(index)"
                     icon
                     color="error"
                   >
@@ -249,12 +249,12 @@ export default {
       this.producto = {};
     },
 
-    sumar(cant, key) {
-      this.pedido.productos[key].cant = cant + 1;
+    sumar(key) {
+      this.pedido.productos[key].cant += 1;
     },
 
-    restar(cant, key) {
-      this.pedido.productos[key].cant = cant - 1;
+    restar(key) {
+      this.pedido.productos[key].cant -= 1;
     },
 
     quitar(j) {
