@@ -75,13 +75,9 @@
                 @page-count="pageCount = $event"
                 :items="pedido.productos"
               >
-                <template v-slot:item.cant="{ item, index }">
-                  <v-btn @click="sumar(index)" icon color="orange">
-                    <v-icon>mdi-arrow-up</v-icon>
-                  </v-btn>
-                  {{ item.cant }}
+                <template v-slot:item.cant="{ item }">
                   <v-btn
-                    @click="quitar(index)"
+                    @click="quitar(item.id)"
                     v-if="item.cant < 2"
                     icon
                     color="error"
@@ -90,11 +86,15 @@
                   </v-btn>
                   <v-btn
                     v-else
-                    @click="restar(index)"
+                    @click="restar(item.id)"
                     icon
                     color="error"
                   >
-                    <v-icon>mdi-arrow-down</v-icon>
+                    <v-icon>mdi-minus</v-icon>
+                  </v-btn>
+                  {{ item.cant }}
+                  <v-btn @click="sumar(item.id)" icon color="orange">
+                    <v-icon>mdi-plus</v-icon>
                   </v-btn>
                 </template>
                 <template v-slot:item.valor="{ item }">
@@ -249,16 +249,19 @@ export default {
       this.producto = {};
     },
 
-    sumar(key) {
-      this.pedido.productos[key].cant += 1;
+    sumar(id) {
+      var index = this.pedido.productos.map((i) => i.id).indexOf(id)
+      this.pedido.productos[index].cant += 1;
     },
 
-    restar(key) {
-      this.pedido.productos[key].cant -= 1;
+    restar(id) {
+      var index = this.pedido.productos.map((i) => i.id).indexOf(id)
+      this.pedido.productos[index].cant -= 1;
     },
 
-    quitar(j) {
-      this.pedido.productos.splice(j, 1);
+    quitar(id) {
+      var index = this.pedido.productos.map((i) => i.id).indexOf(id)
+      this.pedido.productos.splice(index, 1);
     },
 
     async guardar() {

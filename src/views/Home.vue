@@ -14,9 +14,10 @@
                 <p>Hola: {{userStore}}</p>
                 <v-btn type="button" @click="logout" color="secodnary" block>Logout</v-btn>
               </div>
-              <v-form v-else @submit.prevent="login">
-                <v-text-field v-model="user" label="Email" required></v-text-field>
-                <v-text-field v-model="password" label="Password" type="password" required></v-text-field>
+              <v-form v-model="valid" ref="form" v-else @submit.prevent="login">
+                <v-text-field v-model="user" label="User" :rules="[(v) => !!v || 'Requerido']"></v-text-field>
+                <v-text-field v-model="password" label="Password" type="password" :rules="[(v) => !!v || 'Requerido']"></v-text-field>
+                <small class="red--text">{{ message }}</small>
                 <v-btn type="submit" color="primary" block>Login</v-btn>
               </v-form>
             </v-card-text>
@@ -43,15 +44,20 @@ export default {
   name: "HomeView",
   data: () => ({
     user: "",
+    valid: true,
     password: "",
+    message: "",
     userStore: sessionStorage.getItem("key")
   }),
   methods: {
     login() {
+      if (!this.$refs.form.validate()) return;
       const result = users.find(u => u.user === this.user && u.password === this.password);
       if (result) {
         sessionStorage.setItem("key", result.user);
         this.$router.push({ name: "Pedidos" });
+      } else {
+        this.message = "Credenciales inválidas";
       }
     },
     logout() {
