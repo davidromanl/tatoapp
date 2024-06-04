@@ -61,12 +61,6 @@
 
           <v-row dense>
             <v-col>
-              <v-pagination
-                light
-                v-if="pedido.productos.length > 10"
-                v-model="page"
-                :length="pageCount"
-              ></v-pagination>
               <v-data-table
                 dense
                 :headers="headers"
@@ -103,6 +97,12 @@
                   </div>
                 </template>
               </v-data-table>
+              <v-pagination
+                light
+                v-if="pedido.productos.length > 10"
+                v-model="page"
+                :length="pageCount"
+              ></v-pagination>
             </v-col>
           </v-row>
           <v-row dense>
@@ -179,8 +179,8 @@ export default {
     pedido: { productos: [] },
     headers: [
       { text: "Producto", value: "nombre" },
-      { text: "Cant.", value: "cant" },
-      { text: "Valor", value: "valor" },
+      { text: "Cant.", value: "cant", sortable: false, align: "center" },
+      { text: "Valor", value: "valor", align: "right" },
     ],
     productos: [],
     mediosPago: ["Efectivo", "Tarjeta", "Transferencia"],
