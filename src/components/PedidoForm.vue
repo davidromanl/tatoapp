@@ -61,12 +61,6 @@
 
           <v-row dense>
             <v-col>
-              <v-pagination
-                light
-                v-if="pedido.productos.length > 10"
-                v-model="page"
-                :length="pageCount"
-              ></v-pagination>
               <v-data-table
                 dense
                 :headers="headers"
@@ -75,13 +69,9 @@
                 @page-count="pageCount = $event"
                 :items="pedido.productos"
               >
-                <template v-slot:item.cant="{ item, index }">
-                  <v-btn @click="sumar(index)" icon color="orange">
-                    <v-icon>mdi-arrow-up</v-icon>
-                  </v-btn>
-                  {{ item.cant }}
+                <template v-slot:item.cant="{ item }">
                   <v-btn
-                    @click="quitar(index)"
+                    @click="quitar(item.id)"
                     v-if="item.cant < 2"
                     icon
                     color="error"
@@ -90,11 +80,15 @@
                   </v-btn>
                   <v-btn
                     v-else
-                    @click="restar(index)"
+                    @click="restar(item.id)"
                     icon
                     color="error"
                   >
-                    <v-icon>mdi-arrow-down</v-icon>
+                    <v-icon>mdi-minus</v-icon>
+                  </v-btn>
+                  {{ item.cant }}
+                  <v-btn @click="sumar(item.id)" icon color="orange">
+                    <v-icon>mdi-plus</v-icon>
                   </v-btn>
                 </template>
                 <template v-slot:item.valor="{ item }">
@@ -103,6 +97,12 @@
                   </div>
                 </template>
               </v-data-table>
+              <v-pagination
+                light
+                v-if="pedido.productos.length > 10"
+                v-model="page"
+                :length="pageCount"
+              ></v-pagination>
             </v-col>
           </v-row>
           <v-row dense>
@@ -179,8 +179,8 @@ export default {
     pedido: { productos: [] },
     headers: [
       { text: "Producto", value: "nombre" },
-      { text: "Cant.", value: "cant" },
-      { text: "Valor", value: "valor" },
+      { text: "Cant.", value: "cant", sortable: false, align: "center" },
+      { text: "Valor", value: "valor", align: "right" },
     ],
     productos: [],
     mediosPago: ["Efectivo", "Tarjeta", "Transferencia"],
@@ -249,16 +249,19 @@ export default {
       this.producto = {};
     },
 
-    sumar(key) {
-      this.pedido.productos[key].cant += 1;
+    sumar(id) {
+      var index = this.pedido.productos.map((i) => i.id).indexOf(id)
+      this.pedido.productos[index].cant += 1;
     },
 
-    restar(key) {
-      this.pedido.productos[key].cant -= 1;
+    restar(id) {
+      var index = this.pedido.productos.map((i) => i.id).indexOf(id)
+      this.pedido.productos[index].cant -= 1;
     },
 
-    quitar(j) {
-      this.pedido.productos.splice(j, 1);
+    quitar(id) {
+      var index = this.pedido.productos.map((i) => i.id).indexOf(id)
+      this.pedido.productos.splice(index, 1);
     },
 
     async guardar() {
